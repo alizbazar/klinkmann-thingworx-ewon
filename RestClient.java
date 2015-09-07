@@ -2,6 +2,9 @@
  * This class provided a REST implementation for J2ME.
  * @author Christoph Hartmann
  */
+
+// TODO: This might need some packages to be imported in order to work
+
 public class RestClient {
     String userid;
     String password;
@@ -28,12 +31,9 @@ public class RestClient {
         String locale = System.getProperty("microedition.locale");
         if (locale == null) { locale = "en-US"; }
         conn.setRequestProperty("Accept-Language", locale);
-        conn.setRequestProperty("Content-Type", "text/plain");
+        conn.setRequestProperty("Content-Type", "text/json");
         conn.setRequestProperty("Accept", "text/plain");
-        // set HTTP basic authentification
-        if (userid != null &#038;&#038; password != null) {
-            conn.setRequestProperty("Authorization", "Basic " + BasicAuth.encode(userid, password));
-        }
+        conn.setRequestProperty("appKey", "929e65a6-7a88-4c4c-a75b-d40d18cdabbb");
     }
 
     public HttpConnection getConnection(String url) throws IOException {
@@ -102,7 +102,7 @@ public class RestClient {
                 }
 
                 // max 5 redirects
-            } while (redirect == true &#038;&#038; redirectTimes < 5);
+            } while (redirect == true && redirectTimes < 5);
 
             if (redirectTimes == 5) {
                 throw new IOException("Too much redirects");
@@ -152,7 +152,7 @@ public class RestClient {
                 // set the request method to POST
                 hcon.setRequestMethod(HttpConnection.POST);
                 // overwrite content type to be form based
-                hcon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                hcon.setRequestProperty("Content-Type", "application/json");
                 // set message length
                 if (data != null) {
                     hcon.setRequestProperty("Content-Length", ""
@@ -203,7 +203,7 @@ public class RestClient {
                 }
 
                 // max 5 redirects
-            } while (redirect == true &#038;&#038; redirectTimes < 5);
+            } while (redirect == true && redirectTimes < 5);
 
             if (redirectTimes == 5) {
                 throw new IOException("Too much redirects");
@@ -222,29 +222,5 @@ public class RestClient {
             }// end try/catch
         }// end try/catch/finally
         return responseMessage.toString();
-    }
-
-    /**
-     * DELETE
-     * not possible on J2ME therefore we use Rails emulation on PUT and
-     * DELETE like
-     * http://localhost:8080/CandyStreamServer/airport/1?_method=delete
-     * @param url
-     */
-    public String delete(String url) throws IOException {
-        url += "?_method=DELETE";
-        return post(url, null);
-    }
-
-    /**
-     * CREATE not possible on J2ME therefore we use Rails emulation on PUT and
-     * DELETE
-     * @param url
-     * @param data
-     */
-    public String put(String url, String data) throws IOException {
-        data += "&#038;_method=PUT";
-        url += "?" + data;
-        return post(url, null);
     }
 }
